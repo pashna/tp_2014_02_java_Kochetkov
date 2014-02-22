@@ -11,14 +11,14 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import javax.servlet.Servlet;
 
 /**
- * @author p.Kochetkov
+ * @author v.kochetkov
  */
 public class Main {
     public static void main(String[] args) throws Exception {
         Servlet frontend = new FrontendFroSession();
 
         Server server = new Server(8080);
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS); 
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(frontend), "/*");
 
         ResourceHandler resource_handler = new ResourceHandler();

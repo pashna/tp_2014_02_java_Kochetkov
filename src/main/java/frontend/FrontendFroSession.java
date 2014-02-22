@@ -17,13 +17,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class FrontendFroSession extends HttpServlet {
 
-    private String login = "";
-    private String pass = "";
     private AtomicLong userIdGenerator = new AtomicLong();
+    private Map<String, String> usersBase = new HashMap<>();
+
+    public FrontendFroSession () {
+        usersBase.put("pasha","123");
+        usersBase.put("vitaly", "SkyForge");
+    }
 
     public static String getTime() {
         Date date = new Date();
-        date.getTime();
         DateFormat formatter = new SimpleDateFormat("HH.mm.ss");
         return formatter.format(date);
     }
@@ -43,28 +46,19 @@ public class FrontendFroSession extends HttpServlet {
             pageVariables.put("serverTime", getTime());
             pageVariables.put("userId", userId);
             response.getWriter().println(PageGenerator.getPage("timer.tml", pageVariables));
-            return;
         }
     }
 
     public void doPost(HttpServletRequest request,
                        HttpServletResponse response) throws ServletException, IOException {
-        login = request.getParameter("login");
-        pass = request.getParameter("pass");
+        String login = request.getParameter("login");
+        String pass = request.getParameter("pass");
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        Map<String, Object> pageVariables = new HashMap<>();
-        if ((login.equals("pasha"))&&(pass.equals("123"))) {
-            HttpSession session = request.getSession();
-            if( !session.isNew() ) {
-                session.invalidate();
-                session = request.getSession();
-            }
-            Long userId = (Long) session.getAttribute("userId");
-            if (userId == null) {
-                userId = userIdGenerator.getAndIncrement();
-                session.setAttribute("userId", userId);
-            }
+        if (usersBase.containsKey(login) && usersBase.get(login).equals(pass)) {
+            HttpSession session = request.getSession(true);
+            Long userId = userIdGenerator.getAndIncrement();
+            session.setAttribute("userId", userId);
             response.sendRedirect("/timer");
         }
         else {
