@@ -1,6 +1,7 @@
 package frontend;
 
 import templater.PageGenerator;
+import Users.Users;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,12 +19,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class FrontendFroSession extends HttpServlet {
 
     private AtomicLong userIdGenerator = new AtomicLong();
-    private Map<String, String> usersBase = new HashMap<>();
-
-    public FrontendFroSession () {
-        usersBase.put("pasha","123");
-        usersBase.put("vitaly", "SkyForge");
-    }
 
     public static String getTime() {
         Date date = new Date();
@@ -55,7 +50,8 @@ public class FrontendFroSession extends HttpServlet {
         String pass = request.getParameter("pass");
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        if (usersBase.containsKey(login) && usersBase.get(login).equals(pass)) {
+        Users user = new Users();
+        if (user.verifyUser(login, pass)) {
             HttpSession session = request.getSession(true);
             Long userId = userIdGenerator.getAndIncrement();
             session.setAttribute("userId", userId);

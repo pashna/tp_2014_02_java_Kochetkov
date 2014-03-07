@@ -11,7 +11,7 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * @author p.kochetkov
+ * @author p.Kochetkov
  */
 public class PageGenerator {
     private static final String HTML_DIR = "tml";
