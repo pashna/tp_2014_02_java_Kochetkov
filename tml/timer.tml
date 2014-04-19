@@ -19,9 +19,9 @@
     </script>
 </head>
 <body onload='setInterval(function(){refresh()}, ${refreshPeriod} ); setClientTime();'>
+<p>${Hello}</p>
 <p>Client time: <span id='ClientTime'></span></p>
 <p>Server time: ${serverTime}</p>
-<p>Session Id: ${userId}</p>
 <p></p>
 </body>
 </html>
