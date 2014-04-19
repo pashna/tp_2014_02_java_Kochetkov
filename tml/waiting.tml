@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Status Page</title>
+    <script>
+        function refresh() {
+            location.reload();
+        }
+    </script>
+</head>
+<body onload='setInterval(function(){refresh()}, ${refreshPeriod});'>
+
+<div>${userState}</div>
+
+<div>${info}</div>
+</body>
+</html>

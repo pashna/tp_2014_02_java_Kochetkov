@@ -10,6 +10,7 @@
     Пароль:<input type="password" name="pass" />
     <br>
     <input type="submit" value="Войти">
+    <div>${Status}</div>
 </form>
 </body>
 </html>
