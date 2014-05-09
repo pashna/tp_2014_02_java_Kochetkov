@@ -110,6 +110,8 @@ public class Frontend extends HttpServlet implements Runnable, Abonent {
         HttpSession session = request.getSession();
         UserSession userSession = sessionIdToUserSession.get(session.getId());
         Map<String, Object> pageVariables = new HashMap<>();
+        String action = userSession.getAction();
+
         if (userSession == null) { // Нет сессии
             pageVariables.put("info", "");
             pageVariables.put("userState", UserStatus.BAD_SESSION);
@@ -117,8 +119,6 @@ public class Frontend extends HttpServlet implements Runnable, Abonent {
             response.getWriter().println(PageGenerator.getPage("waiting.tml", pageVariables));
             return;
         }
-
-        String action = userSession.getAction();
 
         if (userSession.getUserId() == null) { // Идет регистрация
             if (action.equals(UserStatus.REG_ACTION))
@@ -146,6 +146,27 @@ public class Frontend extends HttpServlet implements Runnable, Abonent {
             return;
         }
 
+        if (userSession.getUserId() == -2) { // Ошибка ввода
+            if (action.equals(UserStatus.REG_ACTION))
+                pageVariables.put("userState", UserStatus.USER_REG_FAILED);
+            if (action.equals(UserStatus.LOGIN_ACTION))
+                pageVariables.put("userState", UserStatus.USER_LOGIN_FAILED);
+
+            pageVariables.put("info", UserStatus.USER_INPUT_ERROR);
+            pageVariables.put("refreshPeriod",  "99999999");
+            response.getWriter().println(PageGenerator.getPage("waiting.tml", pageVariables));
+            return;
+        }
+
+        if (userSession.getUserId() == -3) { // Ошибка базы данных или нулевое поле
+            pageVariables.put("userState", UserStatus.USER_REG_FAILED);
+            pageVariables.put("info", UserStatus.USER_REG_FAILED_DB_INFO);
+
+            pageVariables.put("refreshPeriod",  "99999999");
+            response.getWriter().println(PageGenerator.getPage("waiting.tml", pageVariables));
+            return;
+        }
+
         pageVariables.put("userState", UserStatus.USER_OK);
         if (action.equals(UserStatus.REG_ACTION)) {
             pageVariables.put("info", UserStatus.USER_REG_OK_INFO);
@@ -162,17 +183,9 @@ public class Frontend extends HttpServlet implements Runnable, Abonent {
         UserSession userSession = sessionIdToUserSession.get(session.getId());
         Map<String, Object> pageVariables = new HashMap<>();
 
-        if (userSession == null) {
-            response.sendRedirect(Pages.MAIN_PEG);
-            return;
-        }
-
-        if (userSession.getUserId() == null) {
-            response.sendRedirect(Pages.MAIN_PEG);
-            return;
-        }
-
-        if (userSession.getUserId() == -1) {
+        if ( (userSession.getUserId() == -1)||
+                (userSession == null) ||
+                userSession.getUserId() == null) {
             response.sendRedirect(Pages.MAIN_PEG);
             return;
         }

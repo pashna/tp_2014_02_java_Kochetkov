@@ -26,15 +26,15 @@ public class Main {
         AccountService accountService2 = new AccountService(ms);
 
         (new Thread(frontend)).start();
-        (new Thread(accountService1)).start(); // ЗАЧЕМ 2 ПОТОКА И КАК ОНИ ВЗАИМОДЕЙСТВУЮТ?
-        (new Thread(accountService2)).start(); //
+        (new Thread(accountService1)).start();
+        (new Thread(accountService2)).start();
 
         Server server = new Server(8080);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.addServlet(new ServletHolder(frontend), "/*");
 
         ResourceHandler resource_handler = new ResourceHandler();
-        resource_handler.setDirectoriesListed(true);
+        resource_handler.setDirectoriesListed(false);
         resource_handler.setResourceBase("static");
 
         HandlerList handlers = new HandlerList();

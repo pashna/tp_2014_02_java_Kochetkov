@@ -19,4 +19,10 @@ public class UserStatus {
 
     public static final String LOGIN_ACTION = "login";
     public static final String REG_ACTION = "registration";
+
+    public static final String USER_REG_FAILED = "Registration was failed";
+    public static final String USER_LOGIN_FAILED = "Authorization was failed";
+    public static final String USER_REG_FAILED_DB_INFO = "DataBase error";
+
+    public static final String USER_INPUT_ERROR = "Input error! <BR> <a href=\"/\"> Exit!</a>";
 }

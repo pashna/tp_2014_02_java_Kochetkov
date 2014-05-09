@@ -13,8 +13,7 @@ import java.util.*;
 import java.sql.SQLException;
 
 public class DBTest {
-    MessageSystem ms;
-    private AccountService acManager = new AccountService(ms);
+    private AccountService acManager = new AccountService();
     private static final String T_USER = getRandomString(10);
     private static final String T_PASS = getRandomString(15);
 
@@ -32,8 +31,7 @@ public class DBTest {
         Random random = new Random();
         char from[] = "abcdefghijklmnopqrstuvwxyzABCEFGHIGKLMNOPQRSTUVWXYZ1234567890".toCharArray();
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             result.append(from[random.nextInt((from.length))]);
         }
         return result.toString();
@@ -53,10 +51,13 @@ public class DBTest {
 
     @Test
     public void TestRegisterOk() throws Exception{
-        boolean result = true;
+        boolean result;
         try {
-            acManager.regUser(T_USER, T_PASS);
-        } catch (EmptyDataException|AccountServiceException e) {
+            if (acManager.regUser(T_USER, T_PASS) == 1)
+                result = true;
+            else
+                result = false;
+        } catch (SQLException e) {
             result = false;
         }
         Assert.assertTrue(result);
@@ -64,11 +65,14 @@ public class DBTest {
 
     @Test
     public void TestRegisterFail() throws Exception {
-        boolean result = false;
+        boolean result;
         try {
             acManager.regUser(T_USER, T_PASS);
-            acManager.regUser(T_USER, T_PASS);
-        } catch (EmptyDataException|AccountServiceException e) {
+            if (acManager.regUser(T_USER, T_PASS) == 1)
+                result = false;
+            else
+                result = true;
+        } catch (SQLException e) {
             result = true;
         }
         Assert.assertTrue(result);
@@ -76,11 +80,14 @@ public class DBTest {
 
     @Test
     public void TestLoginOk() throws Exception{
-        boolean result = true;
-        acManager.regUser(T_USER, T_PASS);
+        boolean result;
         try {
-            acManager.logUser(T_USER, T_PASS);
-        } catch (EmptyDataException|AccountServiceException e) {
+            acManager.regUser(T_USER, T_PASS);
+            if (acManager.logUser(T_USER, T_PASS) == 1)
+                result = true;
+            else
+                result = false;
+        } catch (SQLException e) {
             result = false;
         }
         Assert.assertTrue(result);
@@ -88,28 +95,31 @@ public class DBTest {
 
     @Test
     public void TestLoginFail() throws Exception {
-        boolean result = false;
+        boolean result;
         try {
             acManager.regUser(T_USER, T_PASS);
-            acManager.logUser(T_USER, T_PASS+"123");
-        } catch (AccountServiceException e) {
+            if (acManager.logUser(T_USER, T_PASS+"123")==1)
+                result = false;
+            else
+                result = true;
+        } catch (SQLException e) {
             result = true;
         }
         Assert.assertTrue(result);
     }
 
-    @Test
+/*    @Test
     public void TestDeleteOk() throws Exception{
         boolean result = true;
         acManager.regUser(T_USER, T_PASS);
         try {
             acManager.deleteUser(T_USER);
-        } catch (AccountServiceException e) {
+        } catch (SQLException|AccountServiceException e) {
             result = false;
         }
         Assert.assertTrue(result);
     }
-
+*/
     @Test
     public void TestDeleteFail() throws Exception{
         boolean result = false;
@@ -124,10 +134,13 @@ public class DBTest {
 
     @Test
     public void TestEmptyDataOk() throws Exception {
-        boolean result = false;
+        boolean result;
         try {
-            acManager.regUser("", "");
-        } catch (EmptyDataException e) {
+            if (acManager.regUser("", "") == -2)
+                result = true;
+            else
+                result = false;
+        } catch (SQLException e) {
             result = true;
         }
         Assert.assertTrue(result);

@@ -1,6 +1,7 @@
 package db;
-
+// Добавить exec в анонимный класс
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /*
@@ -9,17 +10,16 @@ import java.sql.SQLException;
 
 public class UserDAO {
 
-    ExecHandler handler;
+    //ExecHandler handler;
     Connection connection;
 
     UserDAO (Connection connect) {
         connection = connect;
-        handler = new ExecHandler();
+        //handler = new ExecHandler();
     }
 
     UserDataSet findUser(String username) throws SQLException {
-        return Executor.execQuery(connection, SqlStringConstructor.generateSelect(username),
-                handler);
+        return Executor.execQuery(connection, SqlStringConstructor.generateSelect(username));
     }
 
     boolean addUser(UserDataSet user) throws SQLException {

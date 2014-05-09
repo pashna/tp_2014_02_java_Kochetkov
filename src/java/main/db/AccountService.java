@@ -1,8 +1,6 @@
 package db;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import exception.*;
 import messageSystem.Abonent;
@@ -13,7 +11,7 @@ import utils.*;
 Created by p.Kochetkov on 08.03.14.
  */
 
-public class AccountService implements AccountManagerInterface, Abonent, Runnable {
+public class AccountService implements AccountServiceInterface, Abonent, Runnable {
     private UserDAO dao;
     private Address address;
     private MessageSystem ms;
@@ -26,6 +24,10 @@ public class AccountService implements AccountManagerInterface, Abonent, Runnabl
         ms.getAddressService().setAccountService(address);
     }
 
+    public AccountService() {
+        dao = new UserDAO(DataBaseConnector.getConnection());
+    }
+
     public Address getAddress() {
         return address;
     }
@@ -35,38 +37,41 @@ public class AccountService implements AccountManagerInterface, Abonent, Runnabl
     }
 
     public void run(){
-        while (true){
+        while (true) {
             ms.execForAbonent(this);
-            TimeHelper.sleep(5000);
+            TimeHelper.sleep(100);
         }
     }
 
     @Override
-    public void regUser(String login, String pass)
-                throws  AccountServiceException, SQLException, EmptyDataException {
-        isCorrectLogPas(login, pass);
-        if (dao.findUser(login) != null) throw new AccountServiceException("User already exist");
+    public int regUser(String login, String pass)
+                throws SQLException {
+        if (!isCorrectLogPas(login, pass)) return -2;
+        if (dao.findUser(login) != null) return -1;
         dao.addUser(new UserDataSet(login, pass));
+        return 1;
     }
 
     @Override
-    public void logUser(String login, String pass)
-            throws  AccountServiceException, SQLException, EmptyDataException {
-        isCorrectLogPas(login, pass);
+    public int logUser(String login, String pass)
+            throws SQLException {
+        if (!isCorrectLogPas(login, pass)) return -2;
         UserDataSet user = dao.findUser(login);
-        if ((user == null)||(!user.getPassword().equals(pass))) throw new AccountServiceException("Wrong password");
+        if ((user == null)||(!user.getPassword().equals(pass))) return -1;
+        return 1;
     }
 
     @Override
     public void deleteUser(String login)
             throws  AccountServiceException, SQLException, EmptyDataException {
-            isCorrectLog(login);
-            if (!dao.deleteUser(login)) throw new AccountServiceException("User was not removed");
+        isCorrectLog(login);
+        if (!dao.deleteUser(login)) throw new AccountServiceException("User was not removed");
     }
 
-    private void isCorrectLogPas(String login, String pass) throws EmptyDataException{
+    private boolean isCorrectLogPas(String login, String pass) {
         if ((login == null)||(login.equals(""))||(pass.equals(""))||(pass == null))
-            throw new EmptyDataException("empty string");
+            return false;
+        return true;
     }
 
     private void isCorrectLog(String login) throws EmptyDataException{
@@ -74,8 +79,8 @@ public class AccountService implements AccountManagerInterface, Abonent, Runnabl
             throw new EmptyDataException("empty string");
     }
 
-    public Long getUserId(String name) throws SQLException, NoUserIdException {
-        if (dao.findUser(name) == null) throw new NoUserIdException("No user "+ name);
+    public Long getUserId(String name) throws SQLException {
+        if (dao.findUser(name) == null) return null;
         return dao.findUser(name).getId();
     }
 

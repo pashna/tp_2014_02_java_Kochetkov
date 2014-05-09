@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
 /**
  Created by p.Kochetkov on 29.03.14.
  */
+/*
 public class PageGeneratorTest {
     private Frontend frontend;
     private StringWriter stringWriter;
@@ -63,7 +64,7 @@ public class PageGeneratorTest {
         System.out.println("!!!!");
 //        Assert.assertTrue(stringWriter.toString().contains(""));
     }
-    /*@Test
+    @Test
     public void testFailReg() throws Exception {
         when(REQUEST.getParameter("username")).thenReturn(T_USER);
         when(REQUEST.getParameter("password")).thenReturn(T_PASS);
@@ -71,6 +72,6 @@ public class PageGeneratorTest {
         doThrow(new AccountServiceException("fail reg")).when(ACCOUNT_SERVICE).regUser(T_USER,T_PASS);
         frontend.doPost(REQUEST, RESPONSE);
         Assert.assertTrue(stringWriter.toString().contains("Регистрация"));
-    }*/
+    }
 
-}
+}*/
